@@ -5,8 +5,8 @@ pragma solidity 0.8.19;
 
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
-import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/IERC20.sol"; // from OpenZeppelin through Chainlink
+import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/utils/SafeERC20.sol"; // from OpenZeppelin through Chainlink
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -14,8 +14,9 @@ import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-
  * DO NOT USE THIS CODE IN PRODUCTION.
  */
 contract TransferUSDCBasic {
-    using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20; // Using SafeERC20 to implement IERC20 interface
 
+    // Custom errors
     error NotEnoughBalanceForFees(
         uint256 currentBalance,
         uint256 calculatedFees
@@ -24,7 +25,7 @@ contract TransferUSDCBasic {
     error NothingToWithdraw();
 
     address public owner;
-    IRouterClient private immutable ccipRouter;
+    IRouterClient private immutable ccipRouter; // immutable = can be set in constructor, but cannot be changed later on
     IERC20 private immutable linkToken;
     IERC20 private immutable usdcToken;
 
@@ -105,10 +106,12 @@ contract TransferUSDCBasic {
         );
     }
 
+    // Helper function for students to check if the contract is approved to use USDC (and how much)
     function allowanceUsdc() public view returns (uint256 usdcAmount) {
         usdcAmount = usdcToken.allowance(msg.sender, address(this));
     }
 
+    // Helper function to see the USDC and LINK balance of a given address. This can be your account or the smart contract for example.
     function balancesOf(
         address account
     ) public view returns (uint256 linkBalance, uint256 usdcBalance) {
@@ -121,6 +124,7 @@ contract TransferUSDCBasic {
         _;
     }
 
+    // Withdraw LINK/USDC from the contract if there's any (for example after the transaction)
     function withdrawToken(
         address _beneficiary,
         address _token
